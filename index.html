@@ -45,6 +45,7 @@
       box-shadow: 0 18px 55px rgba(0,0,0,.18);
       text-align:center;
       position:relative;
+      z-index: 2;
     }
     h1{
       margin:0 0 10px;
@@ -171,7 +172,6 @@
       height:auto;
       display:block;
     }
-
     .close{
       background:#111;
       color:#fff;
@@ -194,13 +194,38 @@
     @keyframes duckfall {
       to { transform: translateY(110vh) rotate(12deg); }
     }
+
+    /* Corner GIFs (shown after YES) */
+    .cornerGif{
+      position:fixed;
+      bottom: 12px;
+      width: min(220px, 34vw);
+      height:auto;
+      z-index: 45;
+      display:none;
+      pointer-events:none;
+      filter: drop-shadow(0 10px 14px rgba(0,0,0,.20));
+      border-radius: 14px;
+    }
+    #cornerLeft{ left: 12px; }
+    #cornerRight{ right: 12px; transform: scaleX(-1); } /* mirrored for symmetry */
+
+    @media (max-width: 420px){
+      .cornerGif{ width: min(170px, 40vw); bottom: 8px; }
+      #cornerLeft{ left: 8px; }
+      #cornerRight{ right: 8px; }
+    }
   </style>
 </head>
 <body>
   <div class="hearts"></div>
 
+  <!-- Corner gifs (hidden until YES) -->
+  <img id="cornerLeft" class="cornerGif" alt="Corner gif left" />
+  <img id="cornerRight" class="cornerGif" alt="Corner gif right" />
+
   <main class="card" id="card">
-    <h1>Helloo <span class="name" id="gfName">mon amour</span> 💖</h1>
+    <h1>Hey <span class="name" id="gfName">mon amour</span> 💖</h1>
     <p id="msg">
       Te tengo una preguntota mi cielo…<br/>
       Will the most beautiful woman in the world be my Valentine? 🌹
@@ -216,11 +241,11 @@
 
   <div class="modal" id="modal">
     <div class="modalInner">
-      <p class="big">SIIUUU!! 🥰💞</p>
-      <p class="sub" id="successText">Soy el más feliz.</p>
+      <p class="big">SIIUUUU!! 🥰💞</p>
+      <p class="sub" id="successText">You just made me the happiest person.</p>
 
-      <!-- This is YOUR GIF that appears after YES -->
-      <div class="gifWrap" id="gifWrap">
+      <!-- Main YES gif (200.gif) -->
+      <div class="gifWrap">
         <img id="yesGif" alt="Celebration gif" />
       </div>
 
@@ -229,10 +254,13 @@
   </div>
 
   <script>
-    // Upload 200.gif to the SAME folder as index.html in GitHub
+    // === Files you must upload to the same GitHub folder as index.html ===
     const YES_GIF_URL = "200.gif";
+    const CORNER_GIF_URL = "sirenita.gif";
+    const SONG_URL = "Desvelado.mp3";
+    // ================================================================
 
-    // URL parameters: ?name=HerName&from=YourName&msg=CustomMessage
+    // URL params: ?name=HerName&from=YourName&msg=CustomMessage
     const params = new URLSearchParams(location.search);
     const name = params.get("name") || "mon amour";
     const from = params.get("from") || "Tu Pato";
@@ -243,9 +271,15 @@
     if (custom) document.getElementById("msg").textContent = custom;
 
     const successText = document.getElementById("successText");
-    successText.textContent = `Te amooo ${name}!! 💛🦆 (from ${from})`;
+    successText.textContent = `YAY ${name}!! 💛🦆 (from ${from})`;
 
-    // --- No button dodge + YES grows even more (funny escalation)
+    // Audio (plays on YES click)
+    const song = new Audio(SONG_URL);
+    song.loop = true;            // keep playing
+    song.preload = "auto";
+    song.volume = 0.9;
+
+    // No button dodge + YES grows bigger (funny escalation)
     const noBtn = document.getElementById("noBtn");
     const btnArea = document.getElementById("btnArea");
     const yesBtn = document.getElementById("yesBtn");
@@ -276,19 +310,15 @@
       yesBtn.style.minWidth = `${240 + Math.round((yesScaleBoost - 1) * 180)}px`;
 
       if (dodges === 3) yesBtn.textContent = "Si pofavo 💘";
-      if (dodges === 5) yesBtn.textContent = "Obviooo 💘";
-      if (dodges >= 7) yesBtn.textContent = "YES (IT'S HUGE NOW) 💥💘";
+      if (dodges === 5) yesBtn.textContent = "Obvioo 💘";
+      if (dodges >= 7) yesBtn.textContent = "YESSSS 💥💘";
     }
 
     noBtn.addEventListener("mouseenter", moveNoButton);
     noBtn.addEventListener("touchstart", (e) => { e.preventDefault(); moveNoButton(); }, {passive:false});
     noBtn.addEventListener("click", moveNoButton);
 
-    // --- Duck rain on YES + show GIF
-    const modal = document.getElementById("modal");
-    const closeBtn = document.getElementById("closeBtn");
-    const yesGif = document.getElementById("yesGif");
-
+    // Duck rain
     function duckRain(count = 60) {
       const duckFaces = ["🦆", "🦆💛", "🦆💕", "🦆💞", "💛🦆💛", "🦆💖🦆"];
       for (let i = 0; i < count; i++) {
@@ -314,12 +344,39 @@
       }
     }
 
-    yesBtn.addEventListener("click", () => {
+    // YES behavior: modal + gifs + song
+    const modal = document.getElementById("modal");
+    const closeBtn = document.getElementById("closeBtn");
+    const yesGif = document.getElementById("yesGif");
+
+    const cornerLeft = document.getElementById("cornerLeft");
+    const cornerRight = document.getElementById("cornerRight");
+
+    // Set corner gif sources once
+    cornerLeft.src = CORNER_GIF_URL;
+    cornerRight.src = CORNER_GIF_URL;
+
+    yesBtn.addEventListener("click", async () => {
       modal.style.display = "grid";
       duckRain();
+
+      // main gif in modal
       yesGif.src = YES_GIF_URL;
+
+      // show corner gifs
+      cornerLeft.style.display = "block";
+      cornerRight.style.display = "block";
+
+      // play song (autoplay allowed because this is user click)
+      try {
+        await song.play();
+      } catch (err) {
+        // If the browser blocks for any reason, user can tap YES again or unmute.
+        console.log("Audio play blocked:", err);
+      }
     });
 
+    // close modal (does NOT stop music—if you want it to stop, tell me)
     closeBtn.addEventListener("click", () => modal.style.display = "none");
     modal.addEventListener("click", (e) => { if (e.target === modal) modal.style.display = "none"; });
   </script>
