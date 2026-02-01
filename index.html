@@ -234,7 +234,7 @@
   <script>
     // ========= CUSTOMIZE =========
     // Paste your GIF direct link here (must end in .gif, or be a direct image URL)
-    const GIF_URL = "https://giphy.com/explore/dobby-dancing";
+    const GIF_URL = "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExdnRvazV6aWlsbzh1YnVrZ3JuaThjcjBkdHU2cG1yaGR1N2h3d250YSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/qPCln5TSOsdRS/giphy.gif";
     // =============================
 
     // URL parameters: ?name=HerName&from=YourName&msg=CustomMessage
@@ -289,7 +289,7 @@
 
       // Update yes text a bit for laughs
       if (dodges === 3) yesBtn.textContent = "Si pofavo 💘";
-      if (dodges === 5) yesBtn.textContent = "simona la mona 💘";
+      if (dodges === 5) yesBtn.textContent = "Obviooo 💘";
       if (dodges >= 7) yesBtn.textContent = "YESSSS 💥💘";
     }
 
@@ -333,7 +333,7 @@
       duckRain();
 
       // Show GIF after YES (only if you provided a URL)
-      if (GIF_URL && GIF_URL !== "PASTE_YOUR_GIF_URL_HERE") {
+      if (GIF_URL && GIF_URL !== "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExdnRvazV6aWlsbzh1YnVrZ3JuaThjcjBkdHU2cG1yaGR1N2h3d250YSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/qPCln5TSOsdRS/giphy.gif") {
         yesGif.src = GIF_URL;
         gifWrap.style.display = "block";
       } else {
