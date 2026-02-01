@@ -57,7 +57,7 @@
       line-height:1.4;
     }
     .name{
-      font-weight:800;
+      font-weight:900;
       color:#c9184a;
     }
 
@@ -143,7 +143,7 @@
       z-index:50;
     }
     .modalInner{
-      width:min(540px, 92vw);
+      width:min(560px, 92vw);
       background:white;
       border-radius:22px;
       padding:22px 18px;
@@ -158,23 +158,18 @@
       margin:0 0 14px;
       font-size:18px;
     }
-    .gifWrap, .meWrap{
-      width:min(420px, 86vw);
+    .gifWrap{
+      width:min(460px, 88vw);
       margin: 10px auto 14px;
       border-radius:18px;
       overflow:hidden;
       box-shadow: 0 14px 40px rgba(0,0,0,.18);
+      background:#00000008;
     }
-    .gifWrap img, .meWrap img{
+    .gifWrap img{
       width:100%;
       height:auto;
       display:block;
-    }
-    .meLabel{
-      font-size:14px;
-      opacity:.8;
-      margin-top:-6px;
-      margin-bottom:10px;
     }
 
     .close{
@@ -207,7 +202,7 @@
   <main class="card" id="card">
     <h1>Hey <span class="name" id="gfName">mon amour</span> 💖</h1>
     <p id="msg">
-      Te tengo una preguntota…<br/>
+      Te tengo una preguntota mi cielo…<br/>
       Will the most beautiful woman in the world be my Valentine? 🌹
     </p>
 
@@ -221,36 +216,26 @@
 
   <div class="modal" id="modal">
     <div class="modalInner">
-      <p class="big">SIIUUUU!! 🥰💞</p>
-      <p class="sub" id="successText">Soy el mas feliz.</p>
+      <p class="big">SIIUUU!! 🥰💞</p>
+      <p class="sub" id="successText">Soy el más feliz.</p>
 
-      <!-- Optional GIF (shows if you set a real URL) -->
-      <div class="gifWrap" id="gifWrap" style="display:none;">
+      <!-- This is YOUR GIF that appears after YES -->
+      <div class="gifWrap" id="gifWrap">
         <img id="yesGif" alt="Celebration gif" />
       </div>
-
-      <!-- Your cropped face (shows after YES) -->
-      <div class="meWrap" id="meWrap" style="display:none;">
-        <img id="mePic" alt="Me smiling" />
-      </div>
-      <div class="meLabel" id="meLabel" style="display:none;"></div>
 
       <button class="close" id="closeBtn">Close</button>
     </div>
   </div>
 
   <script>
-    // ========= CUSTOMIZE =========
-    
-
-    // 2) Upload the provided file me_smile.png to your repo root (same place as index.html)
-    const ME_PHOTO_URL = "200.gif";
-    // =============================
+    // Upload 200.gif to the SAME folder as index.html in GitHub
+    const YES_GIF_URL = "200.gif";
 
     // URL parameters: ?name=HerName&from=YourName&msg=CustomMessage
     const params = new URLSearchParams(location.search);
     const name = params.get("name") || "mon amour";
-    const from = params.get("from") || "Tu Pato";
+    const from = params.get("from") || "me";
 
     document.getElementById("gfName").textContent = name;
 
@@ -292,23 +277,17 @@
 
       if (dodges === 3) yesBtn.textContent = "Si pofavo 💘";
       if (dodges === 5) yesBtn.textContent = "Obviooo 💘";
-      if (dodges >= 7) yesBtn.textContent = "YESSSS 💥💘";
+      if (dodges >= 7) yesBtn.textContent = "YES (IT'S HUGE NOW) 💥💘";
     }
 
     noBtn.addEventListener("mouseenter", moveNoButton);
     noBtn.addEventListener("touchstart", (e) => { e.preventDefault(); moveNoButton(); }, {passive:false});
     noBtn.addEventListener("click", moveNoButton);
 
-    // --- Duck rain on YES + show GIF + show your photo
+    // --- Duck rain on YES + show GIF
     const modal = document.getElementById("modal");
     const closeBtn = document.getElementById("closeBtn");
-
-    const gifWrap = document.getElementById("gifWrap");
     const yesGif = document.getElementById("yesGif");
-
-    const meWrap = document.getElementById("meWrap");
-    const mePic = document.getElementById("mePic");
-    const meLabel = document.getElementById("meLabel");
 
     function duckRain(count = 60) {
       const duckFaces = ["🦆", "🦆💛", "🦆💕", "🦆💞", "💛🦆💛", "🦆💖🦆"];
@@ -338,19 +317,7 @@
     yesBtn.addEventListener("click", () => {
       modal.style.display = "grid";
       duckRain();
-
-      // GIF (optional)
-      if (GIF_URL && GIF_URL !== "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExdnRvazV6aWlsbzh1YnVrZ3JuaThjcjBkdHU2cG1yaGR1N2h3d250YSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/qPCln5TSOsdRS/giphy.gif") {
-        yesGif.src = GIF_URL;
-        gifWrap.style.display = "block";
-      } else {
-        gifWrap.style.display = "none";
-      }
-
-      // Your photo (shows after YES)
-      mePic.src = 200_URL;
-      meWrap.style.display = "block";
-      meLabel.style.display = "block";
+      yesGif.src = YES_GIF_URL;
     });
 
     closeBtn.addEventListener("click", () => modal.style.display = "none");
@@ -358,4 +325,5 @@
   </script>
 </body>
 </html>
+
 
